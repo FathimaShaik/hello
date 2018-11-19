@@ -1,0 +1,64 @@
+    <div class="icons">
+      <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-1">
+
+          <img *ngIf="active" class="chevron" src="../../assets/images/stars.svg" alt="" />
+          <img *ngIf="!active" class="left" src="../../assets/images/left.svg" alt="" />
+        </div>
+        <div class="col-md-2">
+          <!-- <a href="javascript:void(0)" (click)="exampleTab()" class="pull-left"> -->
+          <img *ngIf="active" class="chevron" (click)="exampleTab()" src="../../assets/images/stars.svg" alt="" />
+          <img *ngIf="!active" class="star" src="../../assets/images/star.svg" alt="" />
+        </div>
+
+        <!-- 
+          <div class="tips">
+            <span style="background-color:yellow;margin-top: 80%;">
+              <h5 style="color:black;	text-align: justify;">
+                Travel times are approximate and include airplane security check,an boarding,de planing, and ticketing
+                and refueling for
+                trains and cars respetively
+              </h5>
+            </span> -->
+        <div class="col-md-2">
+          <!-- <a href="javascript:void(0)" (click)="timesTab()" class="pull-left"> -->
+          <img *ngIf="timesactive" class="chevron" src="../../assets/images/clock.gif" alt="" />
+          <img *ngIf="!timesactive" class="star" (click)="timesTab()" src="../../assets/images/star.svg" alt="" />
+          <!-- </a> -->
+        </div>
+        <div class="col-md-2">
+          <!-- <a href="javascript:void(0)" (click)="speedTab()" class="pull-left"> -->
+          <img *ngIf="speedactive" class="chevron" src="../../assets/images/speeds.svg" alt="" />
+          <img *ngIf="!speedactive" class="star" (click)="speedTab()" src="../../assets/images/star.svg" alt="" />
+          <!-- </a> -->
+        </div>
+
+        <!-- <div class="tip1">
+       <span style="background-color:yellow;margin-top: 80%;">
+         <h5 style="color:black;	text-align: justify;">
+           Total passengers are the approximate number of passengers transported over the maximum time that it
+           takes for the slowest
+           mode of transportation(in most cases the car).
+         </h5>
+       </span> -->
+        <div class="col-md-2">
+          <!-- <a href="javascript:void(0)" (click)="passengerTab()" class="pull-left"> -->
+          <img *ngIf="passactive" class="chevron" src="../../assets/images/mans.svg" alt="" />
+          <img *ngIf="!passactive" class="star" (click)="passengerTab()" src="../../assets/images/star.svg" alt="" />
+          <!-- </a> -->
+        </div>
+        <div class="col-md-1">
+          <!-- <a href="javascript:void(0)" (click)=" coEmissionTab()" style="width:20px; height:20px" class="pull-left"> -->
+          <img *ngIf="co2active" class="chevron" src="../../assets/images/co2.svg" alt="" />
+          <img *ngIf="!co2active" class="star" (click)=" coEmissionTab()" src="../../assets/images/star.svg" alt="" />
+          <!-- </a> -->
+        </div>
+        <div class="col-md-1">
+
+          <img *ngIf="active" class="chevron" src="../../assets/images/stars.svg" alt="" />
+          <img *ngIf="!active" class="right" src="../../assets/images/right.svg" alt="" />
+        </div>
+        <!-- <div class="col-md-1"></div> -->
+      </div>
+    </div>

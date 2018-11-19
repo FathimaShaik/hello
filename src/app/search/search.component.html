@@ -1,0 +1,90 @@
+
+<div class="landing" *ngIf="hidesearch">
+
+
+  <div class="txtrectangle">
+    <span class="welcomeWherewould" aria-multiline='true'>Welcome! Where would you like to go to with
+      HyperloopTT? </span>
+  </div>
+  <div class="backgd"></div>
+  <div class="insidecapsule">
+    <div class="capsule">
+      <img width="1000px" src='../../assets/images/capsuleicon.png' />
+    </div>
+  </div>
+  <div class="leftcontent">
+    <div class="search">
+      <form  name="form" (ngSubmit)="searchform1.form.valid"  #searchform1="ngForm" >
+        <div class="row">
+          <div class="col-sm-3 col-md-4 col-xl-4">
+            <label for="from">From</label>
+            <input #source  type="text" name="from" ngControl="from" required>
+            <div *ngIf="searchform1.submitted && searchform1.invalid">
+                <div *ngIf="source.errors.required">destination is required</div>
+            </div>
+          </div>
+          <div class="col-sm-3 col-md-1 col-xl-1">
+            <div class="inputspace"></div>
+            <img src='../../assets/images/pin.1.svg'>
+          </div>
+          <div class="col-sm-3 col-md-4 col-xl-4">
+            <label for="to">To</label>
+            <input #destination name="to" type="text" ngControl="to" required>
+            <div *ngIf="searchform1.submitted && searchform1.invalid">
+                <div *ngIf="destination.errors.required">destination is required</div>
+            </div>
+            <span class="hyperloopdistance" *ngIf="distance">{{distance}} km </span>
+            <span class="hyperloopdistance" *ngIf="!distance">0 km </span>
+            <div *ngIf="distance >= 2500" class="errormsg">
+              <div class="triangle"></div><br>
+              <div class="rect">
+                The current route simulation platform supports distances within 2500 km (1,500 miles).
+                 While we keep evolving and optimizing the tool, please enter a shorter route.
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-3 col-md-3 col-xl-3">
+            <div class="inputspace"></div>
+            <button type="button" [disabled]="!play || !searchform1.valid"  [ngClass]="!play ? 'play' : 'notplay'" (click)="Routes()" >PlayRoute</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <p class="hyperloopTTRouteSiCopy">
+      HyperloopTT Route Simulation is for illustrative purposes only. The routes shown on this simulation may not
+      be the optimal Hyperloop routes, which can be determined only after conducting a comprehensive feasibility
+      study.
+    </p>
+    <div class="space"></div><br><br>
+    <p class="orSelectpre-existi"> or Select pre-existing routes</p>
+    <div class="pre-existing">
+      <div class="row">
+        <div class=" col-md-5 col-md-2 col-xl-5">
+          <button type="submit" class="primary-button" (click)="drawRouteLinkOne()">Los Angeles <img src='../../assets/images/pin.1.svg'>
+            San Francisco</button><br><br>
+          <button type="submit" class="primary-button" (click)="drawRouteLinkTwo()">New York <img src='../../assets/images/pin.1.svg'>Chicago</button>
+        </div>
+
+        <div class="col-sm-12 col-md-6 xol-xl-6">
+          <button type="submit" class="primary-button" (click)="drawRouteLinkThree()">SaoPaulo <img src='../../assets/images/pin.1.svg'>
+            Rio de Janeiro</button><br><br>
+          <button type="submit" class="primary-button" (click)="drawRouteLinkFour()"> London <img src='../../assets/images/pin.1.svg'>
+            Amsterdam</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- </div>
+    </div> -->
+    <!-- <div class="col-xl-6" style="margin-left:0%;padding-left:0%"> -->
+    <!-- <div class="insidecapsule"> -->
+    <!-- <div class="capsule">
+          <img src='../../assets/images/capsuleicon.png' />
+
+        </div> -->
+    <!-- </div> -->
+
+
+    <!-- </div> -->
+  </div>
+</div>

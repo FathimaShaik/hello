@@ -1,0 +1,593 @@
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" loadingText="Loading..." type="ball-fussion">
+</ngx-spinner>
+
+<div class="container-fluid">
+  <div id="centerwindow" *ngIf="!hidepopup">
+    <div class="pull-right">
+      <span style="margin-right: 3px;margin-top: 3px; cursor: pointer" (click)="hidepopup=true">
+        <img src="./../assets/images/close_white.png" height="17" width="17">
+      </span>
+    </div>
+    <br>
+    <p id="actionbox">Enter your route to see how fast Hyperloop TT can take you there.</p>
+    <br>
+  </div>
+  <!-- Side pop-up for km to miles and vice-versa conversion -->
+  <div *ngIf="converter">
+    <div id="floating-panel">
+      <div class="pull-right">
+        <span style="margin-right: 3px;margin-top: 3px; cursor: pointer" (click)="converter=false">
+          <img src="./../assets/images/close_white.png" height="20" width="20">
+        </span>
+      </div>
+      <div class="converter-box-text1">
+        <div>
+          Miles (mi) &nbsp;
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="distInKms">
+            <span class="slider round"></span>
+          </label> &nbsp; Kilometers (km)
+        </div>
+      </div>
+      <div class="converter-box-text1">
+        Emissions
+      </div>
+      <div class="converter-box-text2 helptxt">
+        CO2 emissions are measured in units of emissions per passenger mile (g/pass-mi)
+      </div>
+    </div>
+  </div>
+  <!-- error msgs -->
+  <div *ngIf="errormsg" class="errormsg">
+    <span class="triangle" style="top: 25.6%;right:86.2%;"> </span>
+    <p> {{message}}</p>
+  </div>
+  <div class="leftPanel" [@slideInOut]="menuState" id="leftpanel">
+    <div class="bar" (click)="sidenav();converter=false">
+      <a href="javascript:void(0)" style="right: 5px">
+        <img *ngIf="sidenavval" src="../../assets/images/arrow.svg" alt="" />
+        <img *ngIf="!sidenavval" src="../../assets/images/rightarrow.svg" alt="" />
+      </a>
+    </div>
+    <div class="header">
+      <div class="row">
+        <div class="col-md-11">
+          <img class="logo" src="../../assets/images/logo.svg" alt="" />
+        </div>
+        <span class="col-md-1">
+          <a href="javascript:void(0)" (click)="converter = !converter" class="menu pull-right">
+            <img class="info" src="../../assets/images/ico-info.svg" alt="" />
+          </a>
+        </span>
+      </div>
+      <!-- <a href="javascript:void(0)" class="close-panel pull-right" *ngIf="!playroute">
+        <img src="./../assets/images/close_white.png" alt="" (click)="hideInputPanel()" />
+      </a> -->
+    </div>
+    <div class="destinations">
+      <div class="route">
+        <h5> Route Simulator</h5>
+      </div>
+      <div class="pull-left pin">
+        <img src="../../assets/images/pin.svg" alt="" /> </div>
+      <div class="input-container pull-left bottom-margin-20">
+        <div class="pull-left input">
+          <input #source type="text" value="" (input)="hidePopup(); hideerrorpopup()" /> </div>
+        <div class="clear"></div>
+        <div class="line"></div>
+        <div class="clear"></div>
+        <div class="pull-left input ">
+          <!-- <img class="km" src="../../assets/images/baseline-warning.svg" alt="" /> -->
+          <span class="km" *ngIf="distInKms">{{hdistance}}km</span>
+          <span class="km" *ngIf="!distInKms">{{hdistanceInMiles}}mi</span>
+
+          <img *ngIf="errormsg" class="marker" src="../../assets/images/infoo.gif" alt="" />
+
+          <input #destination type="text" value="" name="dest" id="dest" (input)="hidePopup();hideerrorpopup()" />
+        </div>
+      </div>
+      <div class="reverse pull-left">
+        <a href="javascript:void(0)">
+          <img src="../../assets/images/ico-swap.svg" alt="" (click)="swapSourceDest()" /> </a>
+      </div>
+      <div class="clear"></div>
+      <div>
+        <button style="width:10vw;height: 4vh" type="submit" [ngClass]="!errormsg ? 'btn primary-button' : 'btn gray-button'"
+          (click)="getRoutes()" [hidden]="!playroute">Play Route
+        </button>
+        <button style="width:10vw;height: 4vh" type="submit" [ngClass]="!errormsg ? 'btn primary-button' : 'btn gray-button'"
+          (click)="getRoutes()" [hidden]="playroute">Replay Route
+        </button>
+      </div>
+      <div class="clear"></div>
+    </div>
+
+    <div class="icons">
+      <div class="navbar">
+        <ul>
+          <li><a href="javascript:void(0)">
+              <img *ngIf="!active" style="height: 3.5vh" src="../../assets/images/icon-left.svg" alt="" />
+
+            </a></li>
+          <li><a href="javascript:void(0)">
+              <img (click)="exampleTab()" class="star" src="../../assets/images/star.svg" alt="" />
+
+            </a></li>
+          <li>
+            <div class="rectt">
+              <span style="color:black;	text-align: justify;">
+                <div class="triangle1"></div>
+                Travel times are approximate and include airplane security check,an boarding,de planing, and ticketing
+                and refueling
+                for trains and cars respetively
+              </span>
+              <a href="javascript:void(0)">
+                <img (click)="travelTab()" class="star" src="../../assets/images/ico-time.svg" alt="" />
+              </a>
+            </div>
+          </li>
+
+          <li><a href="javascript:void(0)">
+              <img (click)="speedTab()" class="star" src="../../assets/images/ico-speed.svg" alt="" />
+            </a></li>
+          <li>
+            <div class="manrect">
+              <span style="color:black;	text-align: justify;">
+                <div class="mantriangle"></div>
+                Total passengers are the approximate number of passengers transported over the maximum time that it
+                takes for the slowest
+                mode of transportation(in most cases the car).
+              </span>
+              <a href="javascript:void(0)">
+                <img class="star" (click)="passengerTab()" class="star" src="../../assets/images/ico-passenger.svg" alt="" />
+              </a>
+            </div>
+          </li>
+
+          <li><a href="javascript:void(0)">
+              <img *ngIf="!active" (click)="coEmissionTab()" class="star" src="../../assets/images/ico-carbon.svg" alt="" />
+
+            </a></li>
+          <li><a href="javascript:void(0)">
+              <img *ngIf="!active" style="height: 3.5vh" src="../../assets/images/icon-right.svg" alt="" />
+            </a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="scrollbar scrollbar-pink bordered-pink thin">
+      <div class="tools force-overflow">
+        <div class="tabChanges" *ngIf="exampleTabClicked">
+          <h5> Select Pre-Existing Routes</h5>
+          <br>
+
+          <button class="p-button" type="submit" (click)="drawRouteLinkOne()">Los Angeles
+            <img src="../../assets/images/ico-destination-v.svg" alt="" /> San Francisco</button>
+          <br>
+          <br>
+          <button type="submit" class="p-button" (click)="drawRouteLinkTwo()">New York
+            <img src="../../assets/images/ico-destination-v.svg" alt="" /> Chicago</button>
+          <br>
+          <br>
+          <button type="submit" class="p-button" (click)="drawRouteLinkThree()">SaoPaulo
+            <img src="../../assets/images/ico-destination-v.svg" alt="" /> Rio de Janeiro</button>
+          <br>
+          <br>
+          <button type="submit" class="p-button" (click)="drawRouteLinkFour()"> London
+            <img src="../../assets/images/ico-destination-v.svg" alt="" /> Amsterdam</button>
+          <br>
+          <br>
+        </div>
+
+        <div class="timesTab" *ngIf="timesTabclicked">
+          <div class="row">
+            <div class="col-md-8">
+              <h5>Travel Times</h5>
+            </div>
+
+            <div class="col-md-4">
+              <span class="infoMarker">
+                <img (click)="travelInfo()" src="../../assets/images/ico-tooltip.svg" alt="" />
+              </span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <img src="../../assets/images/capsule-compressed-02-copy-2.svg" alt="" />
+            </div>
+            <!-- <div class="col-md-1"></div> -->
+            <div class="col-md-6">
+              <span style="color:aqua">HyperloopTT</span>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-3" style="border-bottom: 1px solid #44CBCE;text-align: right">
+              {{hyperloopTime}}m
+            </div>
+            <!-- <div class="col-md-1"></div> -->
+            <div class="col-md-1" style="border-bottom: 1px solid #44CBCE;"></div>
+            <div class="col-md-6">
+              <span class="vl" *ngFor="let i of Arr(num)"></span>
+            </div>
+          </div>
+          <br>
+
+          <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <img src="../../assets/images/airplane.svg" alt="" />
+            </div>
+            <!-- <div class="col-md-1"></div> -->
+            <div class="col-md-6">
+              <span style="color:aqua">Airplane</span>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-3" style="border-bottom: 1px solid #44CBCE;text-align: right">
+              {{airplanTime}} h
+            </div>
+            <!-- <div class="col-md-1"></div> -->
+            <div class="col-md-1" style="border-bottom: 1px solid #44CBCE;"></div>
+            <div class="col-md-6">
+              <span class="vl" *ngFor="let i of Arr(num1)" style="border-bottom: 1px solid #44CBCE;"></span>
+            </div>
+          </div>
+          <br>
+
+          <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <img src="../../assets/images/train.svg" alt="" />
+            </div>
+            <!-- <div class="col-md-1"></div> -->
+            <div class="col-md-6">
+              <span style="color:aqua">Train</span>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-3" style="border-bottom: 1px solid #44CBCE;text-align: right">
+              <!-- {{PTTime}} -->
+              <div *ngIf="!PTTime">
+                0 m
+              </div>
+              <div *ngIf="PTTime">
+                <span *ngFor="let pt of PTTime; let i = index" [class.helptxt]="(i%2)!==0">
+                  {{ pt==='hours' ? 'h' : pt === 'hour' ? 'h' :pt=='mins' ? 'm':pt }}
+                </span>
+              </div>
+
+            </div>
+            <!-- <div class="col-md-1"></div> -->
+            <div class="col-md-1" style="border-bottom: 1px solid #44CBCE;"></div>
+            <div class="col-md-6">
+              <span class="vl" *ngFor="let i of Arr(num2)" style="border-bottom: 1px solid #44CBCE;"></span>
+            </div>
+          </div>
+          <br>
+
+
+          <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <img src="../../assets/images/car.svg" alt="" />
+            </div>
+
+            <!-- <div class="col-md-1"></div> -->
+            <div class="col-md-6">
+              <span style="color:aqua">Car</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-3" style="border-bottom: 1px solid #44CBCE;text-align: right">
+              <!-- {{drivingTime}} -->
+              <div *ngIf="!drivingTime">
+                0 m
+              </div>
+              <div *ngIf="drivingTime">
+                <span *ngFor="let dt of drivingTime; let i = index" [class.helptxt]="(i%2)!==0">
+                  {{ dt==='hours' ? 'h' : dt === 'hour' ? 'h' :dt }}</span>
+              </div>
+
+            </div>
+            <!-- <div class="col-md-1"></div> -->
+            <div class="col-md-1" style="border-bottom: 1px solid #44CBCE;"></div>
+            <div class="col-md-6">
+              <span class="vl" style="border-bottom: 1px solid #44CBCE;" *ngFor="let i of Arr(num3)"> </span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="speedChanges" *ngIf="speedTabClicked">
+          <div class="speedometer-title">
+            Speed
+          </div>
+          <div id="speedometer">
+
+            <div class="row">
+              <img src="../../assets/images/capsule-compressed-02-copy-2.svg" alt="" height="15" width="40" />&nbsp;&nbsp;
+
+              <canvas *ngIf="!playroute" id="bar1" width="350" height="350"></canvas>
+            </div>
+            <div class="row">
+              <img src="../../assets/images/airplane.svg" alt="" height="15" width="40" />&nbsp;&nbsp;
+              <canvas *ngIf="!playroute" id="bar2" width="350" height="350"></canvas>
+            </div>
+            <div class="row">
+              <img src="../../assets/images/train.svg" alt="" height="15" width="40" />&nbsp;&nbsp;
+              <canvas *ngIf="!playroute" id="bar3" width="350" height="350"></canvas>
+            </div>
+            <div class="row">
+              <img src="../../assets/images/car.svg" alt="" height="15" width="40" />&nbsp;&nbsp;
+              <canvas *ngIf="!playroute" id="bar4" width="350" height="350"></canvas>
+            </div>
+
+          </div>
+        </div>
+        <div class="timesTab1" *ngIf="passengerTabClicked">
+          <div class="row">
+            <div class="col-md-8">
+              <h3>Total Passengers</h3>
+            </div>
+            <div class="col-md-4">
+              <span class="infowindow">
+                <img (click)="passengerInfo()" src="../../assets/images/ico-tooltip.svg" alt="" />
+              </span>
+            </div>
+          </div>
+          <div class="passenger">
+            <img class="man" src="../../assets/images/ico-ppl.svg" alt="">
+            <span style="margin-left:-6%">= 25 Passengers </span>
+            <div class="row">
+              <!-- <div class="col-md-2"></div> -->
+              <div class="col-md-6">
+                <h5 class="driving">Driving Time</h5>
+              </div>
+
+              <div class="col-md-6" style="	margin-left: -13%;">
+                <span class="vertical"></span>&nbsp;
+                <a class="daily" href="">Daily </a>&nbsp;
+                <span class="vertical"></span>&nbsp;
+                <a class="daily" href="">Hourly</a>
+              </div>
+            </div>
+          </div>
+          <div class="head">
+            <img class="pull-left" src="../../assets/images/capsule-compressed-02-copy-2.svg" alt="" />
+            <span style="color:aqua;padding-left:12%;text-align: center ">HyperloopTT</span>
+            <div class="row">
+              <span class="col-md-1"> </span>
+              <span class="hyperrounded">
+                <img style="margin-top:-7%;margin-left: 3%;" src="../../assets/images/ico-passenger.svg" alt="">
+                <span style="float:right"> 2,500</span>
+              </span>
+              <span class="manimg">
+                <div class="row">
+                  <div class="column1" *ngFor="let i of Arr(num4)">
+                    <img class="man" style="margin-right: 4%;" src="../../assets/images/ico-ppl.svg" alt="">
+                  </div>
+                </div>
+              </span>
+            </div>
+          </div>
+          <br>
+          <div class="head">
+            <img class="pull-left" src="../../assets/images/train.svg" alt="" />
+            <span style="color:aqua;padding-left:12%;text-align: center ">Airplane</span>
+            <div class="row">
+              <span class="col-md-1"> </span>
+              <span class="col-md-2" class="hyperrounded">
+                <span>
+                  <img style="margin-top:-7%;margin-left: 3%;" src="../../assets/images/ico-passenger.svg" alt="">
+                </span>
+                <span style="float:right"> 500</span>
+              </span>
+              <span class="manimg">
+                <div class="row">
+                  <div class="column1" *ngFor="let i of Arr(num5)">
+                    <img class="man" src="../../assets/images/ico-ppl.svg" alt="">
+                  </div>
+                </div>
+              </span>
+            </div>
+          </div>
+          <br>
+          <div class="head">
+            <img class="pull-left" src="../../assets/images/train.svg" alt="" />
+            <span style="color:aqua;padding-left:12%;text-align: center ">train</span>
+            <div class="row">
+              <span class="col-md-1"> </span>
+              <span class="col-md-2" class="hyperrounded">
+                <span>
+                  <img style="margin-top:-7%;margin-left: 3%;" src="../../assets/images/ico-passenger.svg" alt="">
+                </span>
+                <span style="float:right">672</span>
+              </span>
+              <span class="manimg">
+                <div class="row">
+                  <div class="column1" *ngFor="let i of Arr(num4)">
+                    <img class="man" src="../../assets/images/ico-ppl.svg" alt="">
+                  </div>
+                  <div class="column1">
+                    <img style="width:1.5vw;" src="../../assets/images/halfman.gif" alt="">
+                  </div>
+                </div>
+              </span>
+            </div>
+          </div>
+          <br>
+
+          <div class="head">
+            <img class="pull-left" src="../../assets/images/car.svg" alt="" />
+            <span style="color:aqua;padding-left:12%;text-align: center ">Car</span>
+            <div class="row">
+              <span class="col-md-1"> </span>
+              <span class="col-md-2" class="hyperrounded">
+                <span>
+                  <img style="margin-top:-7%;margin-left: 3%;" src="../../assets/images/ico-passenger.svg" alt="">
+                </span>
+                <span style="float:right">4</span>
+              </span>
+              <span class="manimg">
+                <div class="row">
+                  <div class="column1">
+                    <img style="width:1.5vw;" src="../../assets/images/man1.gif" alt="">
+                  </div>
+                </div>
+              </span>
+            </div>
+          </div>
+          <br>
+        </div>
+
+        <div class="timesTab2" *ngIf="coEmissionTabClicked">
+          <div class="row">
+            <div class="col-md-10">
+              <h4>Carbon Emissions</h4>
+            </div>
+
+            <div class="co2rect">
+              <span style="color:black;	text-align: justify;">
+                <div class="co2triangle"></div>
+                co2 emission refers to the amount of co2 emitted over the duration of the trip by transportation
+                type.
+                Numbers are approximate.
+              </span>
+              <a href="javascript:void(0)">
+                <img style="width:0.9vw;padding-top:130%;margin-left:-82%;" src="../../assets/images/ico-tooltip.svg"
+                  alt="" />
+              </a>
+
+            </div>
+          </div>
+          <h6>grams of CO2 per kilometer</h6>
+          <br>
+
+          <div class="head">
+            <img class="pull-left" src="../../assets/images/capsule-compressed-02-copy-2.svg" alt="" />
+            <span style="color:aqua;padding-left:30px ">HyperloopTT</span>
+            <br>
+            <div class="row">
+              <span class="col-md-1"> </span>
+              <span class="col-md-2" class="carbonhyperrounded" style="text-align:center">
+                <10 g</span> <span class="col-md-8" style="font-size:0.6vw;padding-left:40px;">
+                  The HyperloopTT system is powered by a combination of alternative energy sources
+              </span>
+            </div>
+          </div>
+          <br>
+          <div class="head">
+            <img class="pull-left" src="../../assets/images/airplane.svg" alt="" />
+            <span style="color:aqua;margin-left:30px">Airplane</span>
+            <br>
+            <div class="co2Rounded">45-60 g</div>
+            <span class="progress-bar primary-button" style="width:20%;margin-top:-5%;margin-left:33%;"></span>
+          </div>
+          <div class="head">
+            <img class="pull-left" src="../../assets/images/train.svg" alt="" />
+            <span style="color:aqua;margin-left:30px">Train</span>
+            <br>
+            <div class="co2Rounded">15-30 g</div>
+            <span class="progress-bar primary-button" style="width:8%;margin-top:-5%;margin-left:33%;"></span>
+          </div>
+          <div class="head">
+            <img class="pull-left" src="../../assets/images/car.svg" alt="" />
+            <span style="color:aqua;margin-left:30px">Car</span>
+            <br>
+            <div class="co2Rounded">
+              10-150 g&nbsp;<img style="width:0.7vw;padding-top:8%;margin-left:0%;" src="../../assets/images/ico-tooltip.svg"
+                alt="" />
+            </div>
+            <span class="progress-bar primary-button" style="width:47%;margin-top:-5%;margin-left:33%;"></span>
+          </div>
+        </div>
+        <span class="hyperloopimg">
+          <span class="title">Related Stories </span>
+          <img src="../../assets/images/hyperloop-track.jpg" alt="" />
+        </span>
+      </div>
+    </div>
+
+    <div class="social">
+      <label class="label">Share your route and follow us</label>
+      <div class="show" *ngIf="show">
+        <div class="smalltriangle"></div>
+        <div class="smallrecta">
+
+
+          <label style="color:#44CBCE">Share</label>&nbsp;&nbsp;&nbsp;
+
+          <a href="javascript:void(0)" (click)="twittershare()">
+            <img src="../../assets/images/twitter.svg" /></a>
+          <a href="javascript:void(0)" (click)="facebookshare()">
+            <img src="../../assets/images/facebook.svg" /></a>
+          <a href="javascript:void(0)" (click)="linkedInshare()">
+            <img class="linked" src="../../assets/images/linkedin.svg" /></a>
+          <a href="javascript:void(0)" (click)="copytxt()">
+            <img src="../../assets/images/share-icon.svg" /></a>
+          <a href="javascript:void(0)" (click)="emailshare()">
+            <img src="../../assets/images/email.svg" /></a>
+        </div>
+      </div><br>
+      <div class="row">
+
+        <div class="col-md-2" style="color:white;font-size: 18px">Share</div>
+        <div class="col-md-1">
+          <img class="shareimage" (click)="show=!show" src="../../assets/images/share.svg" alt="" />
+          <!-- <img class="shareimage" src="../../assets/images/share.svg" alt="" />-->
+        </div>
+        <div class="col-md-1">
+          <a href="javascript:void(0)">
+            <img class="dotline" src="../../assets/images/dottedline.svg" />
+          </a></div>
+        <div class="col-md-1 " style="color:white;font-size:18px;margin-right: 32px;
+        margin-top: -3px;">
+          Follow</div>
+        <div class="col-md-1">
+          <a href="javascript:void(0)">
+            <img class="twitter" src="../../assets/images/twitter.svg" /></a></div>
+        <div class="col-md-1">
+          <a href="javascript:void(0)">
+            <img class="facebook" src="../../assets/images/facebook.svg" /></a></div>
+        <div class="col-md-1">
+          <a href="javascript:void(0)">
+            <img class="linked" src="../../assets/images/linkedin.svg" /></a></div>
+        <div class="col-md-1">
+          <a href="javascript:void(0)">
+            <img class="instagram" src="../../assets/images/instagram.svg" /></a></div>
+        <div class="col-md-1">
+          <a href="javascript:void(0)">
+            <img class="youtube" src="../../assets/images/youtube.svg" /></a></div>
+        <div class="col-md-1"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="bar" (click)="sidenav(); converter=false" *ngIf="sidenavval1">
+      <a href="javascript:void(0)" style="right: 5px">
+        <img *ngIf="sidenavval" src="../../assets/images/arrow.svg" alt="" />
+        <img *ngIf="!sidenavval" src="../../assets/images/rightarrow.svg" alt="" />
+      </a>
+    </div> -->
+  <div id="googleMap" style="width:100%;height:100%;position:absolute; z-index: 0;"></div>
+  <div id="infowindow-content">
+    <span id="place-name" class="title"></span>
+    <span id="place-id"></span>
+    <br>
+    <span id="place-address"></span>
+  </div>
+
+  <div class="speedometer-icon" *ngIf="!playroute">
+    <a href="javascript:void(0)" (click)="showSpeedoMeter = !showSpeedoMeter; startSpeedometer()">
+      <img src="./../assets/images/track_changes.png" height="21" width="21" />
+    </a>
+  </div>
